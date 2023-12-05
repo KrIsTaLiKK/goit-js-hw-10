@@ -9,13 +9,14 @@ const loader = document.querySelector('.loader');
 
 getfetchBreeds();
 
-// Получаем массив пород котов
 function getfetchBreeds() {
-  return API.fetchBreedsOptions()
+  return API.fetchBreeds()
     .then(cats => {
       loader.style.display = 'none';
       breedSelect.classList.remove('is-hidden');
-      renderBreedByIdCatsInOption(cats);
+
+      renderBreedByIdCatsInSelect(cats);
+
       new SlimSelect({
         select: breedSelect,
         settings: {
@@ -30,15 +31,14 @@ function getfetchBreeds() {
 
 breedSelect.addEventListener('change', onSelectChange);
 
-// Функция, которая при выборе option выдает инфу о котах
 function onSelectChange(e) {
   const breed = e.currentTarget.value;
-  loader.style.display = 'block';
+  loader.style.display = 'flex';
 
   catsContainer.classList.add('is-hidden');
   API.fetchCatByBreed(breed)
-    .then(cat => {
-      renderCatsInfo(cat);
+    .then(breed => {
+      renderCatsInfoOnPage(breed);
       loader.style.display = 'none';
     })
     .catch(error => {
@@ -46,8 +46,7 @@ function onSelectChange(e) {
     });
 }
 
-// Делаем функцию, кот рендерит option в select
-function renderBreedByIdCatsInOption(cats) {
+function renderBreedByIdCatsInSelect(cats) {
   const markup =
     `<option data-placeholder="true" id="placeholder"></option>` +
     cats
@@ -59,13 +58,13 @@ function renderBreedByIdCatsInOption(cats) {
   breedSelect.insertAdjacentHTML('afterbegin', markup);
 }
 
-// Делаем функцию, кот рендерит описание котов при выборе option
-function renderCatsInfo(breed) {
-  const markup = `<ul><li class='cat-item'><img src='${breed[0].url}' width = '600px'><div class='container-text'><h2>${breed[0].breeds[0].name}</h2><p class='cat-temper'><b>Temperament:</b> ${breed[0].breeds[0].temperament}</p><p>${breed[0].breeds[0].description}</p></div></li></ul>`;
+function renderCatsInfoOnPage([breed]) {
+  const { breeds } = breed;
+
+  const markup = `<ul><li class='cat-item'><img src='${breed.url}' alt='${breeds[0].name}' width = '600px'><div class='container-text'><h2>${breeds[0].name}</h2><p class='cat-temper'><b>Temperament:</b> ${breeds[0].temperament}</p><p>${breeds[0].description}</p></div></li></ul>`;
 
   catsContainer.innerHTML = markup;
   catsContainer.classList.remove('is-hidden');
-  loader.style.display = 'none';
 }
 
 function fetchError(error) {
@@ -75,4 +74,5 @@ function fetchError(error) {
     'Something went wrong! Try reloading the page!',
     'Okay'
   );
+  throw new Error('Error');
 }
