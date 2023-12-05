@@ -58,10 +58,11 @@ function renderBreedByIdCatsInSelect(cats) {
   breedSelect.insertAdjacentHTML('afterbegin', markup);
 }
 
-function renderCatsInfoOnPage([breed]) {
-  const { breeds } = breed;
+function renderCatsInfoOnPage(breed) {
+  const { breeds, url } = breed[0];
+  const { name, temperament, description } = breeds[0];
 
-  const markup = `<ul><li class='cat-item'><img src='${breed.url}' alt='${breeds[0].name}' width = '600px'><div class='container-text'><h2>${breeds[0].name}</h2><p class='cat-temper'><b>Temperament:</b> ${breeds[0].temperament}</p><p>${breeds[0].description}</p></div></li></ul>`;
+  const markup = `<ul><li class='cat-item'><img src='${url}' alt='${name}' width = '600px'><div class='container-text'><h2>${name}</h2><p class='cat-temper'><b>Temperament:</b> ${temperament}</p><p>${description}</p></div></li></ul>`;
 
   catsContainer.innerHTML = markup;
   catsContainer.classList.remove('is-hidden');
